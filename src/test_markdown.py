@@ -1,7 +1,7 @@
 import unittest
 
 from textnode import TextNode, TextType
-from markdownnode import split_nodes_delimiter
+from inline_markdown import split_nodes_delimiter
 
 class TestTextNode(unittest.TestCase):
     # def test_eq(self):
@@ -10,14 +10,15 @@ class TestTextNode(unittest.TestCase):
     #     self.assertEqual(node, node2)
 
 
-    def test_print(self):
-        print("-------print test for split------------")
-        node = TextNode("This is text with a `code block` word", TextType.TEXT)
-        new_nodes = split_nodes_delimiter([node], "`", TextType.CODE)
-        print(new_nodes)
+    # def test_print(self):
+    #     print("-------print test for split------------")
+    #     node = TextNode("This is text with a `code block` word", TextType.TEXT)
+    #     new_nodes = split_nodes_delimiter([node], "`", TextType.CODE)
+    #     print(new_nodes)
 
-        print()
-        print()
+    #     print()
+    #     print()
+    pass
 
 
 
