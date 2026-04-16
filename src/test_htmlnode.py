@@ -42,7 +42,7 @@ class TestHTMLNode(unittest.TestCase):
 )
 
         result = node.to_html()
-        print(result)
+        # print(result)
 
 
 
