@@ -141,8 +141,9 @@ def markdown_to_html_node(markdown):
 
         if block_type is BlockType.HEADING:
             tag, text = header_helper(block)
-            
-            ParentNode(p)
+            child_text_node = TextNode(text, TextType.TEXT)
+            child_node = text_node_to_html_node(child_text_node)
+            return ParentNode(tag, [child_node]).to_html()
             
 
         # extract text
@@ -156,4 +157,5 @@ This is a **bold** tale of _courage_.
 - Slew a dragon
 """
 result = markdown_to_html_node(input)
+print(f"result: {result}")
 
