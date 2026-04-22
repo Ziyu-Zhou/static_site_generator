@@ -155,12 +155,84 @@ def quote_helper(block):
 
     children_node = text_to_children_node(text)
 
+    # print(f"quote children_node: {children_node}")
+
     return ParentNode(tag, children_node)
 
+# unorder list helper 
+# input: block 
+# process: 
+# take in a block of multi-line list markdown
+# each line has a "- " as syntax
+
+# output: child_node
+
+def unorder_list_helper(block):
+
+    children_node = []
+    list_item_node = []
+
+    # block example:
+    # 1. wake up
+    # 2. drink coffee
+    # 3. write code
+
+    process_split = block.split("\n")
+
+    # split = [1. wake up, 2. drink coffee, 3. write code]
+
+    # take the syntax
+
+    process_clean = [x[2:] for x in process_split]
+
+    # clean = [wake up, drink coffee, write code]
+
+    # print(process_clean)
+
+    for item in process_clean:
+        node = text_to_children_node(item)
+        
+        list_item_node.append(ParentNode("li",node))
+
+    print("list item: ")
+    print(list_item_node)
+
+    return ParentNode("ul", list_item_node)
 
 
+def order_list_helper(block):
 
-    
+    # copied from unorder_list
+    children_node = []
+    list_item_node = []
+
+    # block example:
+    # 1. wake up
+    # 2. drink coffee
+    # 3. write code
+
+    process_split = block.split("\n")
+
+    # split = [1. wake up, 2. drink coffee, 3. write code]
+
+    # take the syntax
+
+    process_clean = [x[3:] for x in process_split]
+
+    # clean = [wake up, drink coffee, write code]
+
+    # print(process_clean)
+
+    for item in process_clean:
+        node = text_to_children_node(item)
+        
+        list_item_node.append(ParentNode("li",node))
+
+    print("list item: ")
+    print(list_item_node)
+
+    return ParentNode("ol", list_item_node)
+
 
 def markdown_to_html_node(markdown):
     
@@ -182,7 +254,8 @@ def markdown_to_html_node(markdown):
         # code here need to be able to 
         # 1. parse the header
         # 2. find a matched tag for this header
-        # 3. 
+        # 3. extract text and process
+        # 4. add to block_nodes 
 
         if block_type is BlockType.HEADING:
             node = header_helper(block)
@@ -192,8 +265,17 @@ def markdown_to_html_node(markdown):
             node = quote_helper(block)
 
             block_nodes.append(node)
+        
+        if block_type is BlockType.ULIST:
+            node = unorder_list_helper(block)
 
-        # extract text
+            block_nodes.append(node)
+
+        if block_type is BlockType.OLIST:
+            node = order_list_helper(block)
+
+            block_nodes.append(node)
+        
     
     # end of block loop 
 
@@ -202,7 +284,50 @@ def markdown_to_html_node(markdown):
     return html_node
 
 
-md = "> The only way to do great work is to love what you do.\n> If you haven't found it yet, keep looking.\n> Don't settle."
+# md = "> The only way to do great work is to love what you do.\n> If you haven't found it yet, keep looking.\n> Don't settle."
+
+# md = "- apples\n- bananas\n- cherries"
+
+md = """# My Weekend Plans
+
+## Saturday
+
+> The early bird catches the worm,
+> but the second mouse gets the cheese.
+
+### Things to buy
+
+- fresh **bread**
+- a jar of _honey_
+- some `tea` leaves
+
+### Steps for the morning
+
+1. wake up at **7am**
+2. brew _loose leaf_ tea
+3. walk to the `bakery`
+
+## Sunday
+
+#### Quote of the day
+
+> Rest when you're weary.
+> Refresh and renew yourself.
+
+##### Grocery list
+
+- apples
+- oranges
+- grapes
+
+###### Schedule
+
+1. breakfast
+2. reading
+3. nap"""
+
 result = markdown_to_html_node(md)
 print(f"result: {result.to_html()}")
+
+
 
