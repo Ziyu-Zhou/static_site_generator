@@ -3,7 +3,8 @@ import unittest
 from block_markdown import (
     markdown_to_blocks,
     block_to_block_type,
-    BlockType
+    BlockType,
+    markdown_to_html_node,
 
 )
 
@@ -71,5 +72,26 @@ This is the same paragraph on a new line
         print("end of block tests")
 
 
+    def test_markdown_to_html_header(self):
+        md = "# This is a heading"
+        result = markdown_to_html_node(md)
+        self.assertEqual(result, "<h1>This is a heading</h1>")
+# Expected output: "<div><h1>This is a heading</h1></div>"
+        md = """# Heading 1
+
+## Heading 2
+
+### Heading 3
+
+#### Heading 4
+
+##### Heading 5
+
+###### Heading 6"""
+
+        result = markdown_to_html_node(md)
+
+        
+        print(result)
 if __name__ == "__main__":
     unittest.main()

@@ -1,7 +1,7 @@
 from enum import Enum
 import re
 from htmlnode import ParentNode, LeafNode, HTMLNode
-
+from inline_markdown import text_to_textnodes
 from textnode import TextNode, TextType, text_node_to_html_node
 class BlockType(Enum):
     PARAGRAPH = "paragraph"
@@ -102,22 +102,65 @@ def block_to_block_type(block):
 
 # helper functions 
 
+# text process helper
+# input raw text
+# output child_node 
+def text_to_children_node(text):
+
+    text_nodes = text_to_textnodes(text)
+    child_node = []
+    for node in text_nodes:
+        child_node.append(text_node_to_html_node(node))
+
+
+    return child_node 
+
 # header helper 
 
-def header_helper(markdown):
-    
+def header_helper(block):
     # input is a block of raw markdown 
     tag = ""
     text = ""
-    syntax = markdown.strip().split(" ", 1)
+    syntax = block.strip().split(" ", 1)
     print(syntax)
     num = len(syntax[0])
     tag = f"h{num}"
     text = syntax[1]
     print(f"tag: {tag}, text: {text}")
     # returns the tag and text 
-    return tag, text
+    # update: this function needs to return parent node instead
+    # since the inline could be nested 
+    
+    child_node = text_to_children_node(text)
 
+
+    return ParentNode(tag, child_node)
+
+# quote helper 
+
+def quote_helper(block):
+    
+    # split by \n 
+    # quote is a mult line that start with "> "
+
+
+    split = block.split("\n") # this should organize each line into a item in a list 
+    cleaned_line = []
+    for line in split:
+        line = line[2:] # "> "
+        cleaned_line.append(line)
+    text = " ".join(cleaned_line)
+
+    tag = "blockquote"
+
+    children_node = text_to_children_node(text)
+
+    return ParentNode(tag, children_node)
+
+
+
+
+    
 
 def markdown_to_html_node(markdown):
     
@@ -129,6 +172,8 @@ def markdown_to_html_node(markdown):
     # for example: HEADING doesn't tell use #, ## or ###
 
     # sample: 
+
+    block_nodes = []
     for block in blocks:
         block_type = block_to_block_type(block)
 
@@ -140,22 +185,24 @@ def markdown_to_html_node(markdown):
         # 3. 
 
         if block_type is BlockType.HEADING:
-            tag, text = header_helper(block)
-            child_text_node = TextNode(text, TextType.TEXT)
-            child_node = text_node_to_html_node(child_text_node)
-            return ParentNode(tag, [child_node]).to_html()
-            
+            node = header_helper(block)
+            block_nodes.append(node)
+        
+        if block_type is BlockType.QUOTE:
+            node = quote_helper(block)
+
+            block_nodes.append(node)
 
         # extract text
+    
+    # end of block loop 
+
+    html_node = ParentNode("div", block_nodes)
+
+    return html_node
 
 
-input = """# My Adventure
-
-This is a **bold** tale of _courage_.
-
-- Found a sword
-- Slew a dragon
-"""
-result = markdown_to_html_node(input)
-print(f"result: {result}")
+md = "> The only way to do great work is to love what you do.\n> If you haven't found it yet, keep looking.\n> Don't settle."
+result = markdown_to_html_node(md)
+print(f"result: {result.to_html()}")
 
