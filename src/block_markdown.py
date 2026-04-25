@@ -234,6 +234,39 @@ def order_list_helper(block):
     return ParentNode("ol", list_item_node)
 
 
+def code_helper(block):
+
+    process_strip = block[4:-3]
+    # process_newline = block[]
+    
+    text = "".join(process_strip)
+    # print(f"text: {text}")
+
+    # print(f"process_strip: {process_strip}")
+
+    text_node = TextNode(process_strip, TextType.CODE)
+    html_node = text_node_to_html_node(text_node)
+
+    return ParentNode("pre",[html_node])
+
+def paragraph_helper(block):
+
+    # copied from quote
+
+    split = block.split("\n") # this should organize each line into a item in a list 
+    cleaned_line = []
+    for line in split:
+        cleaned_line.append(line)
+    text = " ".join(cleaned_line)
+
+    tag = "p"
+
+    children_node = text_to_children_node(text)
+
+    # print(f"quote children_node: {children_node}")
+
+    return ParentNode(tag, children_node)
+
 def markdown_to_html_node(markdown):
     
     # 1.
@@ -261,20 +294,32 @@ def markdown_to_html_node(markdown):
             node = header_helper(block)
             block_nodes.append(node)
         
-        if block_type is BlockType.QUOTE:
+        elif block_type is BlockType.QUOTE:
             node = quote_helper(block)
 
             block_nodes.append(node)
         
-        if block_type is BlockType.ULIST:
+        elif block_type is BlockType.ULIST:
             node = unorder_list_helper(block)
 
             block_nodes.append(node)
 
-        if block_type is BlockType.OLIST:
+        elif block_type is BlockType.OLIST:
             node = order_list_helper(block)
 
             block_nodes.append(node)
+
+        elif block_type is BlockType.CODE:
+            node = code_helper(block)
+
+            block_nodes.append(node)
+        
+        else:
+            node = paragraph_helper(block)
+
+            block_nodes.append(node)
+        
+        
         
     
     # end of block loop 
@@ -288,45 +333,16 @@ def markdown_to_html_node(markdown):
 
 # md = "- apples\n- bananas\n- cherries"
 
-md = """# My Weekend Plans
+md = """```
+def greet(name):
+    return f"Hello, {name}"
+```"""
 
-## Saturday
 
-> The early bird catches the worm,
-> but the second mouse gets the cheese.
-
-### Things to buy
-
-- fresh **bread**
-- a jar of _honey_
-- some `tea` leaves
-
-### Steps for the morning
-
-1. wake up at **7am**
-2. brew _loose leaf_ tea
-3. walk to the `bakery`
-
-## Sunday
-
-#### Quote of the day
-
-> Rest when you're weary.
-> Refresh and renew yourself.
-
-##### Grocery list
-
-- apples
-- oranges
-- grapes
-
-###### Schedule
-
-1. breakfast
-2. reading
-3. nap"""
 
 result = markdown_to_html_node(md)
+# print(f"result: {result}")
+
 print(f"result: {result.to_html()}")
 
 

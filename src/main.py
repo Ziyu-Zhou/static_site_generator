@@ -1,11 +1,18 @@
 print("hello world")
 from textnode import TextNode, TextType
+from copystatic import copy_files_recursive
+import os
+import shutil
+
 def main():
-    text = "This is some anchor text"
-    text_type = TextType.LINK
-    url = "https://www.boot.dev"
-    node = TextNode(text, text_type, url)
-    print(node)
+
+    source_path = "./static"
+    dest = "./public"
+    if os.path.exists(dest):
+        shutil.rmtree(dest)
+
+    copy_files_recursive(source_path, dest)
+
 
 
 
