@@ -14,9 +14,10 @@ class HTMLNode:
             return ""
         html_string = " "
         for key in self.props:
-            html_string += key
-            html_string += self.props[key]
-            html_string += " "
+            # html_string += key
+            # html_string += self.props[key]
+            # html_string += " "
+            html_string += f' {key}="{self.props[key]}"'
 
         return html_string
     
