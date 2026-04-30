@@ -12,7 +12,7 @@ class HTMLNode:
     def props_to_html(self):
         if self.props is None:
             return ""
-        html_string = " "
+        html_string = ""
         for key in self.props:
             # html_string += key
             # html_string += self.props[key]
